@@ -4,48 +4,110 @@ using UnityEngine;
 
 public class Heroship : MonoBehaviour
 {
-    GameObject ship;
-    GameObject cam;
-    public static float speed=1;
+    public GameObject ship, bullet, cannon;
+    public GameObject[] bulletzero;
+    public static float speed=7;
+    public static float xrot, yrot, xlimit, ylimit;
+    public int shotscount=0;
     void Awake()
     {
+        Cursor.visible=false;
+        Cursor.lockState=CursorLockMode.Locked;
+
         ship=transform.GetChild(0).gameObject;
-        cam=transform.GetChild(1).gameObject;
-    }
-    void Start()
-    {
+        cannon=transform.GetChild(0).transform.GetChild(1).gameObject;
+        bulletzero=GameObject.FindGameObjectsWithTag("mycanon");
+        
         
     }
-
-    public static float xrot, yrot;
-    //Vector3 rot;
     void Update()
     {
-        Move(gameObject,1);
+        Control(); 
+        if (Input.GetMouseButtonDown(0))
+        {
+            Shot();
+        }  
     }
-
-    public static void Move(GameObject go, float sensibility)
+    //float rotfx=2;
+    void Control()
     {
         xrot=Input.GetAxis("Mouse X");
         yrot=Input.GetAxis("Mouse Y");
-        go.transform.eulerAngles+=new Vector3(yrot,xrot,0)*sensibility;
-        go.transform.position+=new Vector3();
-        if(Input.GetKey(KeyCode.W))
+        cannon.transform.eulerAngles+=new Vector3(0,xrot,0);//yrot*-1
+        transform.eulerAngles+=new Vector3(yrot*-1,0,0);//
+        if (Input.GetKey(KeyCode.W))
         {
-            go.transform.position+=go.transform.forward*speed;
+            transform.position+=ship.transform.forward*speed;
         }
         if(Input.GetKey(KeyCode.S))
         {
-            go.transform.position-=go.transform.forward*speed;
+            transform.position-=ship.transform.forward*speed;
+        }
+        if (Input.GetKey(KeyCode.D))
+        {
+            ship.transform.Rotate(transform.up*speed*0.7f);
+        }
+        else if (Input.GetKey(KeyCode.A))
+        {
+            ship.transform.Rotate(transform.up*(-1)*speed*0.7f);    
+        }
+        //transform.eulerAngles=new Vector3(transform.eulerAngles.x, ship.transform.eulerAngles.y, transform.eulerAngles.z);
+        
+        //cursor.transform.position+=new Vector3(xrot,0,0);
+        //cannon.transform.LookAt(cursor.transform.position);
+    }
+
+    /*void Control()
+    {
+        xrot=Input.GetAxis("Mouse X");
+        yrot=Input.GetAxis("Mouse Y");
+        transform.eulerAngles+=new Vector3(yrot*-1,xrot,0);
+        cursor.transform.position+=new Vector3(xrot,0,0);
+        cannon.transform.LookAt(cursor.transform.position);
+        if(Input.GetKey(KeyCode.W))
+        {
+            transform.position+=transform.forward*speed;
+        }
+        if(Input.GetKey(KeyCode.S))
+        {
+            transform.position-=transform.forward*speed;
         }
         if(Input.GetKey(KeyCode.D))
         {
-            go.transform.position+=go.transform.right*speed;
+            transform.position+=transform.right*speed;
         }
         if(Input.GetKey(KeyCode.A))
         {
-            go.transform.position-=go.transform.right*speed;
+            transform.position-=transform.right*speed;
+        } 
+        if(Input.GetKey(KeyCode.Space))
+        {
+            transform.position+=transform.up;
+        }     
+
+    }*/
+
+    void Shot()
+    {
+        GameObject[] bullets=new GameObject[bulletzero.Length];
+        for (int i = 0; i < bullets.Length; i++)
+        {
+            bullets[i]=GameObject.Instantiate(bullet);
+            bullets[i].transform.position=bulletzero[i].transform.position;
+            bullets[i].transform.rotation=bulletzero[i].transform.rotation;
+            bullets[i].GetComponent<Rigidbody>().AddForce(bulletzero[i].transform.up*20000);
         }
+        shotscount++;
+        if (shotscount>30)
+        {
+            foreach (var item in GameObject.FindGameObjectsWithTag("proyectile"))
+            {
+                Destroy(item);
+            }
+            shotscount=0;
+        }
+        Debug.Log(shotscount);
     }
-    
 }
+
+
