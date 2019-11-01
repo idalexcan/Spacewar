@@ -4,34 +4,36 @@ using UnityEngine;
 
 public class Heroship : MonoBehaviour
 {
-    public GameObject ship, bullet, cannon;
+    public GameObject ship, bullet, tofollow, cannon;
+    
     public GameObject[] bulletzero;
 
-    public float speed=3;
+    public float speed, sensibility;
     public float xrot, yrot;
-    public float timerclick;
 
-    public int shotscount=0;
+    public int shotscount = 0;
+
+
 
     void Awake()
     {
-        Cursor.visible=false;
-        Cursor.lockState=CursorLockMode.Locked;
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
 
-        //ship=transform.GetChild(0).gameObject;
-        //cannon=transform.GetChild(0).transform.GetChild(1).gameObject;
-        //bulletzero=GameObject.FindGameObjectsWithTag("mycanon");
-        
-        cannon= transform.GetChild(1).gameObject;
+        speed = 500;
+        sensibility = 0.8f;
+        cannon = transform.GetChild(1).gameObject;
         bulletzero = GameObject.FindGameObjectsWithTag("mycanon");
+
     }
+
     void Update()
     {
-        Control(); 
-        if (Input.GetMouseButtonDown(0))
+        Control();
+        if (Input.GetMouseButtonDown(1))
         {
             Shot();
-        }  
+        }
     }
 
     void Control()
@@ -40,21 +42,15 @@ public class Heroship : MonoBehaviour
         yrot = Input.GetAxis("Mouse Y");
         if (Input.GetMouseButton(0))
         {
-            float speedaux;
-            timerclick++;
-            if (Input.GetMouseButton(0)&&timerclick<5)
-            {
-                speedaux = speed * 2;
-                timerclick = 0;
-            }
-            else
-            {
-                speedaux = speed;
-            }
-            transform.position += transform.forward * speedaux;
+            GetComponent<Rigidbody>().AddForce(transform.forward*speed);
         }
-
+        else
+        {
+            GetComponent<Rigidbody>().velocity = Vector3.zero;
+        }
+        transform.eulerAngles += new Vector3(yrot*-1, xrot, 0) * sensibility;
     }
+
 
     /*void Control()
     {
@@ -82,29 +78,28 @@ public class Heroship : MonoBehaviour
         }
         
     }*/
-    
-
     void Shot()
     {
-        GameObject[] bullets=new GameObject[bulletzero.Length];
+        GameObject[] bullets = new GameObject[bulletzero.Length];
         for (int i = 0; i < bullets.Length; i++)
         {
-            bullets[i]=GameObject.Instantiate(bullet);
-            bullets[i].transform.position=bulletzero[i].transform.position;
-            bullets[i].transform.rotation=bulletzero[i].transform.rotation;
-            bullets[i].GetComponent<Rigidbody>().AddForce(bulletzero[i].transform.up*20000);
+            bullets[i] = GameObject.Instantiate(bullet);
+            bullets[i].transform.position = bulletzero[i].transform.position;
+            bullets[i].transform.rotation = bulletzero[i].transform.rotation;
+            bullets[i].GetComponent<Rigidbody>().AddForce(bulletzero[i].transform.up * 20000);
         }
         shotscount++;
-        if (shotscount>30)
+        if (shotscount > 30)
         {
             foreach (var item in GameObject.FindGameObjectsWithTag("proyectile"))
             {
                 Destroy(item);
             }
-            shotscount=0;
+            shotscount = 0;
         }
         Debug.Log(shotscount);
     }
+
 }
 
 
