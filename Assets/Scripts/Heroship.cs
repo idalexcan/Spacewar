@@ -9,7 +9,7 @@ public class Heroship : MonoBehaviour
     public GameObject[] bulletOrigin;
 
     public float speed, sensibility;
-    public float mousex, mousey, mousexRange, estableValue;
+    public float mousex, mousey, mousexRange, camRemoteness;
     bool camInestable;
 
     public int shotscount = 0;
@@ -25,10 +25,34 @@ public class Heroship : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetKey(KeyCode.S))
+        {
+            speed = 50;
+        }
+        else
+        {
+            speed = 700;
+        }
         Control();
         Shot();
         ClearProyectiles(30);
+
+        if (Input.GetKey(KeyCode.E))
+        {
+            GetComponent<Rigidbody>().velocity = Vector3.zero;
+
+            if (transform.eulerAngles!=Vector3.zero)
+            {
+                print(transform.eulerAngles);
+                transform.eulerAngles = Vector3.Lerp(new Vector3(0, transform.eulerAngles.y, transform.eulerAngles.z), Vector3.zero, sensibility / 50);
+
+                GetComponent<Rigidbody>().freezeRotation = true;
+
+            }
+
+        }
     }
+
 
     float Abs(float n)
     {
@@ -41,15 +65,15 @@ public class Heroship : MonoBehaviour
         mousey = Input.GetAxis("Mouse Y");
 
         mousexRange+=mousex;
-        if (Abs(mousexRange)>50)
+        if (Abs(mousexRange)>10)
         { 
             camInestable=true;
         }
         if (camInestable)
         {
-            cam.transform.localPosition=Vector3.Lerp(cam.transform.localPosition,Vector3.zero,sensibility/13);
-            estableValue=(cam.transform.localPosition-Vector3.zero).magnitude;
-            if (estableValue<1)
+            cam.transform.localPosition=Vector3.Lerp(cam.transform.localPosition,Vector3.zero,sensibility/80);
+            camRemoteness=(cam.transform.localPosition-Vector3.zero).magnitude;
+            if (camRemoteness<5)
             {
                 camInestable=false;
                 mousexRange=0;
