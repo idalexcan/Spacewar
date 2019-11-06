@@ -10,7 +10,7 @@ public class Heroship : MonoBehaviour
 
     public float speed, sensibility;
     public float mousex, mousey, mousexRange, camRemoteness;
-    bool camInestable;
+    bool camUnestable;
 
     public int shotscount = 0;
 
@@ -33,6 +33,7 @@ public class Heroship : MonoBehaviour
         {
             speed = 700;
         }
+
         Control();
         Shot();
         ClearProyectiles(30);
@@ -43,7 +44,6 @@ public class Heroship : MonoBehaviour
 
             if (transform.eulerAngles!=Vector3.zero)
             {
-                print(transform.eulerAngles);
                 transform.eulerAngles = Vector3.Lerp(new Vector3(0, transform.eulerAngles.y, transform.eulerAngles.z), Vector3.zero, sensibility / 50);
 
                 GetComponent<Rigidbody>().freezeRotation = true;
@@ -58,6 +58,8 @@ public class Heroship : MonoBehaviour
     {
         return Mathf.Sqrt(n*n);
     }
+
+    
     
     void Control()
     {
@@ -65,17 +67,17 @@ public class Heroship : MonoBehaviour
         mousey = Input.GetAxis("Mouse Y");
 
         mousexRange+=mousex;
-        if (Abs(mousexRange)>10)
+        if (Abs(mousexRange)>12)
         { 
-            camInestable=true;
+            camUnestable=true;
         }
-        if (camInestable)
+        if (camUnestable)
         {
-            cam.transform.localPosition=Vector3.Lerp(cam.transform.localPosition,Vector3.zero,sensibility/80);
+            cam.transform.localPosition=Vector3.Lerp(cam.transform.localPosition,Vector3.zero,sensibility/10);
             camRemoteness=(cam.transform.localPosition-Vector3.zero).magnitude;
-            if (camRemoteness<5)
+            if (camRemoteness<1f)
             {
-                camInestable=false;
+                camUnestable=false;
                 mousexRange=0;
             }
         }else
@@ -106,8 +108,9 @@ public class Heroship : MonoBehaviour
                 bullets[i] = GameObject.Instantiate(bullet);
                 bullets[i].transform.position = bulletOrigin[i].transform.position;
                 bullets[i].transform.rotation = bulletOrigin[i].transform.rotation;
-                bullets[i].GetComponent<Rigidbody>().AddForce(bulletOrigin[i].transform.up * 100000);
+                bullets[i].GetComponent<Rigidbody>().AddForce(bulletOrigin[i].transform.up * 50000);
                 bullets[i].AddComponent<Proyectile>();
+                Debug.Log("cañofistola");
             }
             shotscount++;
         }
