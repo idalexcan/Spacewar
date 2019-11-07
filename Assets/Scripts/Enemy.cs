@@ -23,7 +23,7 @@ public class Enemy : MonoBehaviour
         Transform tempT = GameObject.Find("Catyaroad").transform;
         roadPoints = new Vector3[tempT.childCount];
         Vector3 tempPoschild;
-        for (int i = 0, j = 0; i < tempT.childCount; i++, j = j + Random.Range(1000,2000)) 
+        for (int i = 0, j = 0; i < tempT.childCount; i++, j = j + Random.Range(2000,5000)) 
         {
             tempPoschild=tempT.GetChild(i).transform.localPosition;
             tempT.GetChild(i).transform.localPosition = new Vector3(tempPoschild.x, tempPoschild.y, j);
@@ -33,28 +33,30 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
+        //GetComponent<Rigidbody>().velocity = transform.forward * speed * 50;
+        //CatyaConduct();
         switch (enemyType)
         {
-            
             case EnemyType.catya:
+                CatyaConduct();
                 break;
         }
     }
 
     void CatyaConduct()
     {
-        if (contPoints<roadPoints.Length)
+        if (contPoints<roadPoints.Length-1)
         {
-            if ((roadPoints[contPoints] - transform.position).magnitude > 20)
-            {
-                transform.LookAt(roadPoints[contPoints]);
-                GetComponent<Rigidbody>().velocity= transform.forward * speed*50;
-                transform.position += (roadPoints[contPoints] - transform.position).normalized * speed;
-            }
-            else
+            if ((roadPoints[contPoints] - transform.position).magnitude < 10)
             {
                 contPoints++;
             }
+            transform.LookAt(roadPoints[contPoints]);
+            GetComponent<Rigidbody>().velocity= transform.forward * speed;
+        }
+        else
+        {
+            Debug.Log("ya paró xd");
         }
     }
 
