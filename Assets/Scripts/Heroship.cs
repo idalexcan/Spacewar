@@ -58,8 +58,6 @@ public class Heroship : MonoBehaviour
     {
         return Mathf.Sqrt(n*n);
     }
-
-    
     
     void Control()
     {

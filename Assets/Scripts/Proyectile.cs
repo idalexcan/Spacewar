@@ -17,13 +17,11 @@ public class Proyectile : MonoBehaviour
     }
 
     /// <summary>
-    /// OnCollisionEnter is called when this collider/rigidbody has begun
-    /// touching another rigidbody/collider.
+    /// OnTriggerEnter is called when the Collider other enters the trigger.
     /// </summary>
-    /// <param name="other">The Collision data associated with this collision.</param>
-    /*void OnCollisionEnter(Collision other)
+    /// <param name="other">The other Collider involved in this collision.</param>
+    void OnTriggerEnter(Collider other)
     {
-        Debug.Log("he colisionado");
-        GetComponent<MeshRenderer>().enabled=false;
-    }*/
+        other.gameObject.SetActive(false);
+    }
 }
