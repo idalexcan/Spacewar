@@ -11,6 +11,7 @@ public class Heroship : MonoBehaviour
     public float speed, sensibility;
     public float mousex, mousey, camDistance;
     public int shotscount = 0;
+    public bool colapse;
 
 
     void Awake()
@@ -23,17 +24,13 @@ public class Heroship : MonoBehaviour
 
     void Update()
     {
-
-        Control();
-        Shot();
-        ClearProyectiles(30);
-
-        if (Input.GetKey(KeyCode.E))
+        if (colapse==false)
         {
-            cam.transform.position=camOrigin.transform.position;
-
-
+            Control();
+            Shot();
+            ClearProyectiles(30);
         }
+        
 
         /*if (Input.GetKey(KeyCode.E))
         {
@@ -53,7 +50,12 @@ public class Heroship : MonoBehaviour
         }*/
 
     }
-    
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        colapse = true;
+    }
+
     float speedaux;
     void Control()
     {
