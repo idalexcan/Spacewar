@@ -5,13 +5,11 @@ using UnityEngine;
 
 public class Heroship : MonoBehaviour
 {
-    public GameObject cam, camOrigin, bullet, cannon, shotline, brujula, target;
+    public GameObject cam, camOrigin, bullet, cannon, shotline, brujula, target, globalBrujula;
     public GameObject[] bulletOrigin;
 
     public float speed, sensibility;
-    public float mousex, mousey, mousexRange, camRemoteness;
-    bool camUnestable;
-
+    public float mousex, mousey, camDistance;
     public int shotscount = 0;
 
 
@@ -20,19 +18,11 @@ public class Heroship : MonoBehaviour
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
 
-        cam.transform.localScale=camOrigin.transform.localScale;
+        cam.transform.position=camOrigin.transform.position;
     }
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.S))
-        {
-            speed = 50;
-        }
-        else
-        {
-            speed = 700;
-        }
 
         Control();
         Shot();
@@ -40,64 +30,69 @@ public class Heroship : MonoBehaviour
 
         if (Input.GetKey(KeyCode.E))
         {
+            cam.transform.position=camOrigin.transform.position;
+
+
+        }
+
+        /*if (Input.GetKey(KeyCode.E))
+        {
             GetComponent<Rigidbody>().velocity = Vector3.zero;
 
             if (transform.eulerAngles!=Vector3.zero)
             {
-                transform.eulerAngles = Vector3.Lerp(new Vector3(0, transform.eulerAngles.y, transform.eulerAngles.z), Vector3.zero, sensibility / 50);
-
+                transform.eulerAngles =
+                 Vector3.Lerp(
+                    new Vector3(0, transform.eulerAngles.y, transform.eulerAngles.z), 
+                    globalBrujula.transform.eulerAngles, 
+                    sensibility / 50);
                 GetComponent<Rigidbody>().freezeRotation = true;
 
             }
 
-        }
-    }
+        }*/
 
-
-    float Abs(float n)
-    {
-        return Mathf.Sqrt(n*n);
     }
     
+    float speedaux;
     void Control()
     {
         mousex = Input.GetAxis("Mouse X");
         mousey = Input.GetAxis("Mouse Y");
-
-        mousexRange+=mousex;
-        if (Abs(mousexRange)>12)
-        { 
-            camUnestable=true;
-        }
-        if (camUnestable)
+        
+        camDistance=(cam.transform.position-camOrigin.transform.position).magnitude;
+        if (camDistance>10)
         {
-            cam.transform.localPosition=Vector3.Lerp(cam.transform.localPosition,Vector3.zero,sensibility/10);
-            camRemoteness=(cam.transform.localPosition-Vector3.zero).magnitude;
-            if (camRemoteness<1f)
-            {
-                camUnestable=false;
-                mousexRange=0;
-            }
-        }else
-        {
-            cam.transform.localPosition+=new Vector3(mousex*-1,0,0)*sensibility/2;
+            cam.transform.position=camOrigin.transform.position;
         }
 
+        // Movimiento y rotación de nave 
+        if (Input.GetKey(KeyCode.Space))
+        {
+            speedaux=speed*2f;
+        }
+        else
+        {
+            speedaux=speed;
+        }
         if (Input.GetMouseButton(0))
         {
-            GetComponent<Rigidbody>().velocity=transform.forward*speed;
+            GetComponent<Rigidbody>().velocity=transform.forward*speedaux;
+            cam.GetComponent<Rigidbody>().velocity=transform.forward*speedaux;
         }
         else
         { 
             GetComponent<Rigidbody>().velocity=Vector3.zero;
+            cam.GetComponent<Rigidbody>().velocity=Vector3.zero;
         }
-        transform.eulerAngles+=new Vector3(mousey,mousex*-1,0)*sensibility;
+        transform.Rotate(new Vector3(mousey,mousex*-1,0)*sensibility);
+        cam.transform.Rotate(new Vector3(mousey,mousex*-1,0)*sensibility);
     }
 
     void Shot()
     {
         brujula.transform.LookAt(target.transform.position);
-        shotline.SetActive(Input.GetKey(KeyCode.Space));
+        //shotline.SetActive(Input.GetKey(KeyCode.Space));
         if (Input.GetMouseButtonDown(1))
         {
             GameObject[] bullets = new GameObject[bulletOrigin.Length];

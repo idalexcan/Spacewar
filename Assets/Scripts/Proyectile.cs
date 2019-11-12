@@ -2,9 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum TypeProyectile
+{
+    bullet, catyanStone
+}
 public class Proyectile : MonoBehaviour
 {
-    // Start is called before the first frame update
+    public TypeProyectile type;
     void Start()
     {
         
@@ -13,15 +17,43 @@ public class Proyectile : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        switch (type)
+        {
+            case TypeProyectile.catyanStone:
+            CatyanStoneControl();
+            break; 
+         
+        }
     }
 
-    /// <summary>
-    /// OnTriggerEnter is called when the Collider other enters the trigger.
-    /// </summary>
-    /// <param name="other">The other Collider involved in this collision.</param>
+    int timer=0;
+    void CatyanStoneControl()
+    {
+        timer++;
+        if (timer>13)
+        {
+            if (transform.localScale.magnitude<60)
+            {
+                transform.localScale+=new Vector3(1,1,1)*0.7f;
+            }
+            else
+            {
+                GetComponent<SphereCollider>().enabled=true;
+            }
+            
+            if (timer>150)
+            {
+                Destroy(gameObject);
+            }
+        }
+    }
+
     void OnTriggerEnter(Collider other)
     {
-        other.gameObject.SetActive(false);
+        if (other.GetComponent<Enemy>())
+        {
+            other.GetComponent<Enemy>().dead=true;
+            other.GetComponent<Enemy>().ImDead(); 
+        }        
     }
 }

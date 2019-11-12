@@ -8,70 +8,45 @@ public enum EnemyType
 }
 public class Enemy : MonoBehaviour
 {
+    // Variables generales
     public EnemyType enemyType;
+    public bool dead;
     public float speed;
+    public int life;
+    
+    
+    
 
-    public static Vector3[] roadPoints;
-    public static float catyaSpeed;
-    int contPoints=0;
-
-    Vector3[] tofollow;
-
-
-    private void Awake()
-    {
-        Transform tempT = GameObject.Find("Catyaroad").transform;
-        roadPoints = new Vector3[tempT.childCount];
-        Vector3 tempPoschild;
-        for (int i = 0, j = 0; i < tempT.childCount; i++, j = j + Random.Range(2000,5000)) 
-        {
-            tempPoschild=tempT.GetChild(i).transform.localPosition;
-            tempT.GetChild(i).transform.localPosition = new Vector3(tempPoschild.x, tempPoschild.y, j);
-            roadPoints[i] = tempT.GetChild(i).transform.position;
-        }
-    }
-
-    void Update()
-    {
-        //GetComponent<Rigidbody>().velocity = transform.forward * speed * 50;
-        //CatyaConduct();
-        switch (enemyType)
-        {
-            case EnemyType.catya:
-                CatyaConduct();
-                break;
-        }
-    }
-
-    void CatyaConduct()
-    {
-        if (contPoints<roadPoints.Length-1)
-        {
-            if ((roadPoints[contPoints] - transform.position).magnitude < 10)
-            {
-                contPoints++;
-            }
-            transform.LookAt(roadPoints[contPoints]);
-            GetComponent<Rigidbody>().velocity= transform.forward * speed;
-        }
-        else
-        {
-            Debug.Log("ya paró xd");
-        }
-    }
-
-    void CatyanConduct()
+    void Awake()
     {
         
     }
+    
+    // void Start()
+    // {
+    //     for (int i = 0; i < 400; i++)
+    //     {
+    //         GameObject cubo=GameObject.Instantiate(GameObject.Find("Cubito"));
+    //         float x=Random.Range(-300,300), y=Random.Range(-300,300), z=Random.Range(-200,10000);
+    //         cubo.transform.position=new Vector3(x,y,z);
+    //     }
+    // }
+
+    
+    void Update()
+    {
+        
+    }
+
+    public void ImDead() // CUANDO EL ENEMIGO MUERE
+    {
+        Interface.EnemyDead(gameObject, enemyType);
+        gameObject.SetActive(false);
+    }
+
+    
 }
+ 
 
 
-        /*Transform tempT = GameObject.Find("Warapo").transform;
 
-        childs = new GameObject[tempT.childCount];
-
-        for (int i = 0; i < tempT.childCount; i++)
-        {
-            childs[i] = tempT.GetChild(i).gameObject;
-        }*/
